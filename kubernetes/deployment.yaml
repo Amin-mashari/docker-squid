@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squid
+spec:
+  selector:
+    matchLabels:
+      name: squid
+  template:
+    metadata:
+      labels:
+        name: squid
+    spec:
+      # if you have a private image registry, uncomment the following lines and add your credentials
+      # imagePullSecrets:
+      #   - name: regcred
+      containers:
+      - name: squid
+        image: kasra.r1.kubit.dev/today-general/squid-http-proxy:3.5.27
+        resources:
+          limits:
+            cpu: 30m
+            memory: 300Mi
+          requests:
+            cpu: 10m
+            memory: 150Mi
+        envFrom:
+        - secretRef:
+            name: squid    
+        ports:
+          - containerPort: 3128
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /var/spool/squid
+            name: data
+          - mountPath: /etc/squid/squid.conf
+            name: squid-conf            
+            subPath: squid.conf
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: squid-conf
+        configMap:
+          name: squid-conf
+          items:
+            - key: squid.conf
+              path: squid.conf

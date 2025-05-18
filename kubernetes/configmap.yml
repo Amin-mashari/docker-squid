@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squid-conf
+data:
+  squid.conf: |
+    # Enable basic authentication using NCSA password file
+    auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/auth/users
+    auth_param basic realm Squid Proxy Authentication
+
+    # Define ACL for authenticated users
+    acl authenticated proxy_auth REQUIRED
+    # Critical & FATAl Errors
+    debug_options ALL,0
+    # Warning 
+    # debug_options ALL,1
+
+    # Allow only authenticated users
+    http_access allow authenticated
+
+    # Deny everyone else
+    http_access deny all
+
+    # Listen on default Squid port
+    http_port 3128

@@ -1,0 +1,16 @@
+services:
+  squid:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    container_name: squid
+    hostname: squid
+    ports:
+      - "3128:3128"
+    volumes:
+      - ./data/cache:/var/spool/squid
+      - ./squid.conf:/etc/squid/squid.conf
+    environment:
+      AUTH_USER: "proxy"
+      AUTH_PASSWORD: "proxy"
+    restart: always
